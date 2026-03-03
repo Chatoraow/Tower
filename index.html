@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- タイトル設定 -->
+    <title>TenfubuTower</title>
+
+    <!-- ファビコン　-->
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+
+    <!-- OGP設定例　-->
+    <meta property="og:title" content="TenfubuTower" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://chatoraow.github.io/Tower/" />
+    <meta property="og:image" content="https://chatoraow.github.io/Tower/TemplateData/logo1.png" />
+    <meta property="og:description" content="タワーーー!!!" />
+
+    <!-- PeerJS Library -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+        }
+
+        #unity-container {
+            width: 100%;
+            height: 100%;
+            max-width: calc(100vh * 1919 / 910);
+            /* ブラウザの最大表示より横に広がらないように制限 */
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #000;
+        }
+
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            background: #231F20;
+        }
+
+        #loading-bar {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            color: white;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="unity-container">
+        <canvas id="unity-canvas"></canvas>
+        <div id="loading-bar">Loading...</div>
+    </div>
+    <script>
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#loading-bar");
+
+        // JSLibから参照できるようにグローバルに持たせる
+        var unityInstance = null;
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/Build.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/Build.data",
+            frameworkUrl: buildUrl + "/Build.framework.js",
+            codeUrl: buildUrl + "/Build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "TENFUBU",
+            productName: "TenfubuTower",
+            productVersion: "0.81",
+        };
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                loadingBar.innerHTML = "Loading... " + Math.round(100 * progress) + "%";
+            }).then((instance) => {
+                unityInstance = instance;
+                loadingBar.style.display = "none";
+            }).catch((message) => {
+                alert(message);
+            });
+        };
+        document.body.appendChild(script);
+    </script>
+</body>
+
+</html>
